@@ -1,17 +1,9 @@
-//import { checkSchema, validationResult } from "express-validator";
-const express = require("express");
-const axios = require("axios");
-require("dotenv").config();
+import { checkSchema, validationResult } from "express-validator";
+import express from "express";
+import axios from "axios";
+import {} from "dotenv/config";
 const app = express();
 app.use(express.json());
-
-// app.use(cors());
-
-// import path from "path";
-// import { fileURLToPath } from "url";
-
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
 
 // // Configuring body parser middleware
 // app.use(bodyParser.urlencoded({ extended: false }));
@@ -20,20 +12,20 @@ app.use(express.json());
 //register new user
 app.post(
   "/users",
-  // checkSchema({
-  //   email: {
-  //     isEmail: {
-  //       errorMessage: "Must be a valid e-mail address",
-  //     },
-  //   },
-  //   name: { notEmpty: true },
-  //   gender: { notEmpty: true },
-  //   status: { notEmpty: true },
-  // }),
+  checkSchema({
+    email: {
+      isEmail: {
+        errorMessage: "Must be a valid e-mail address",
+      },
+    },
+    name: { notEmpty: true },
+    gender: { notEmpty: true },
+    status: { notEmpty: true },
+  }),
   async (req, res) => {
     try {
-      // const errors = validationResult(req);
-      // const errorMessages = errors.array();
+      const errors = validationResult(req);
+      const errorMessages = errors.array();
       const registerResponse = await axios.post(
         "https://gorest.co.in/public/v2/users",
         req.body,
@@ -52,7 +44,7 @@ app.post(
         success: true,
         message: "User registered successfully",
         body: req.body,
-        // errors: errorMessages,
+        errors: errorMessages,
       });
     } catch (error) {
       console.error(error);
