@@ -100,14 +100,16 @@ app.delete("/users/:id", async (req, res) => {
 });
 
 //create a new todo
-app.post("/todos", async (req, res) => {
+app.post("/users/:id/todos", async (req, res) => {
   try {
     const { title, status } = req.body;
+    const user = req.params.id;
     const response = await axios.post(
-      "https://gorest.co.in/public/v2/todos",
+      `https://gorest.co.in/public/v2/users/${user}/todos`,
       {
         title,
-        completed: status === "pending",
+        status,
+        user
       },
       {
         headers: {
@@ -118,7 +120,7 @@ app.post("/todos", async (req, res) => {
     res.status(201).json(response.data); //resource created
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Failed to create todo" });
+    res.status(500).json({ error: error.response.data });
   }
 });
 
