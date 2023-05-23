@@ -5,11 +5,6 @@ import {} from "dotenv/config";
 const app = express();
 app.use(express.json());
 
-// // Configuring body parser middleware
-// app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(bodyParser.json());
-
-//register new user
 app.post(
   "/users",
   checkSchema({
@@ -53,31 +48,6 @@ app.post(
   }
 );
 
-// get all users
-app.get("/users", async (req, res) => {
-  try {
-    // Make a GET request to fetch all users
-    const usersResponse = await axios.get(
-      "https://gorest.co.in/public/v2/users",
-      {
-        headers: {
-          Authorization: "Bearer " + process.env.TOKEN,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    const users = usersResponse.data.data;
-    res.send(users);
-
-    res.status(200).json({ success: true, users });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "An error occurred" });
-  }
-});
-
-//delete a user
 app.delete("/users/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -86,20 +56,13 @@ app.delete("/users/:id", async (req, res) => {
         Authorization: `Bearer ${process.env.TOKEN}`,
       },
     });
-    res.sendStatus(204); //no content
+    res.sendStatus(204);
   } catch (error) {
     console.log(error);
-    if (error.response && error.response.status === 401) {
-      res.status(401).json({ error: "Invalid id" });
-    } else if (error.response && error.response.status === 404) {
-      res.status(404).json({ error: "User not found." });
-    } else {
-      res.status(500).json({ error: "Failed to delete user." });
-    }
+    res.status(400).json({ error: "Invalid id" });
   }
 });
 
-//create a new todo
 app.post("/users/:id/todos", async (req, res) => {
   try {
     const { title, status } = req.body;
@@ -109,7 +72,7 @@ app.post("/users/:id/todos", async (req, res) => {
       {
         title,
         status,
-        user
+        user,
       },
       {
         headers: {
@@ -117,14 +80,13 @@ app.post("/users/:id/todos", async (req, res) => {
         },
       }
     );
-    res.status(201).json(response.data); //resource created
+    res.status(201).json(response.data);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error.response.data });
   }
 });
 
-//get list of todos
 app.get("/todos", async (req, res) => {
   try {
     const { page = 1, pageSize = 10 } = req.query;
