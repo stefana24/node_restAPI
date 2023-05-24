@@ -89,6 +89,7 @@ app.post("/users/:id/todos", async (req, res) => {
 
 app.get("/todos", async (req, res) => {
   try {
+    console.log(req.query);
     const { page = 1, pageSize = 10 } = req.query;
     const response = await axios.get("https://gorest.co.in/public/v2/todos", {
       params: {
@@ -98,6 +99,13 @@ app.get("/todos", async (req, res) => {
       headers: {
         Authorization: `Bearer ${process.env.TOKEN}`,
       },
+    });
+    //res.send(response.data);
+
+    const todos = response.data;
+    console.log(todos);
+    res.json({
+      todos,
     });
   } catch (error) {
     console.error(error);
